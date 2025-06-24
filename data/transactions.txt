@@ -1,0 +1,3 @@
+Account: 123456, Type: W, Amount: 100.0, Status: Withdrawal OK
+Account: 123456, Type: D, Amount: 200.0, Status: Deposit OK
+Account: 123456, Type: W, Amount: 50.0, Status: Withdrawal OK

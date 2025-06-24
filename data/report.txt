@@ -1,0 +1,4 @@
+End of Day Report
+Account: 123456 Bal: 1950.0
+Account: 789012 Bal: 7000.0
+Total: 8950.0
