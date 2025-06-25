@@ -1,4 +1,6 @@
 import sqlite3
+import os
+import subprocess
 
 # Start the database
 conn = sqlite3.connect('C:/banking-mainframe-project/data/bank.db')
@@ -37,6 +39,7 @@ def process_transaction(acct_id, trans_type, amount):
     print(f'Status: {status}')
     with open('C:/banking-mainframe-project/data/transactions.txt', 'a') as f:
         f.write(f'Account: {acct_id}, Type: {trans_type}, Amount: {amount}, Status: {status}\n')
+
 # Make a report
 def generate_report():
     cursor.execute('SELECT ACCOUNT_ID, BALANCE FROM ACCOUNTS')
@@ -58,16 +61,33 @@ def view_transactions():
     except FileNotFoundError:
         print("\nNo transaction history yet.")
 
-view_transactions()  # Call this before starting transactions
-while True:
+# COBOL integration
+def calculate_interest():
     try:
+        result = subprocess.run(['C:/banking-mainframe-project/scripts/bin/interest.exe'], capture_output=True, text=True)
+        if result.returncode == 0:
+            print("COBOL Interest Calculation:", result.stdout)
+            with open('C:/banking-mainframe-project/data/report.txt', 'a') as f:
+                f.write("COBOL Interest: " + result.stdout + "\n")
+        else:
+            print("COBOL execution failed:", result.stderr)
+    except Exception as e:
+        print("Error calling COBOL:", e)
+
+# Main program flow
+if __name__ == "__main__":
+    calculate_interest()  # Run at startup (optional, for console output)
+    while True:
+        view_transactions()
         acct_id = input('Enter Account ID (0 to exit): ')
         if acct_id == '0':
             break
         trans_type = input('Enter Type (D=Deposit, W=Withdrawal): ').upper()
         amount = float(input('Enter Amount: '))
-        process_transaction(int(acct_id), trans_type, amount)
-    except ValueError:
-        print('Invalid input. Use numbers for ID and amount.')
-generate_report()
-conn.close()
+        try:
+            process_transaction(int(acct_id), trans_type, amount)
+        except ValueError:
+            print('Invalid input. Use numbers for ID and amount.')
+    generate_report()
+    calculate_interest()  # Add this line to write to report.txt after report
+    conn.close()
