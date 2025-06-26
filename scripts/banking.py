@@ -64,11 +64,13 @@ def view_transactions():
 # COBOL integration
 def calculate_interest():
     try:
-        result = subprocess.run(['C:/banking-mainframe-project/scripts/bin/interest.exe'], capture_output=True, text=True)
+        cursor.execute('SELECT BALANCE FROM ACCOUNTS WHERE ACCOUNT_ID = ?', (123456,))
+        balance = cursor.fetchone()[0]
+        result = subprocess.run(['C:/banking-mainframe-project/scripts/bin/interest.exe', str(balance)], capture_output=True, text=True)
         if result.returncode == 0:
             print("COBOL Interest Calculation:", result.stdout)
             with open('C:/banking-mainframe-project/data/report.txt', 'a') as f:
-                f.write("COBOL Interest: " + result.stdout + "\n")
+                f.write("COBOL Interest for Account 123456: " + result.stdout + "\n")
         else:
             print("COBOL execution failed:", result.stderr)
     except Exception as e:

@@ -7,6 +7,7 @@
            01  TIMEAT       PIC 9(2) VALUE 2.
            01  INTEREST     PIC 9(6)V9(2).
        PROCEDURE DIVISION.
+           ACCEPT PRINCIPAL FROM ARGUMENT-VALUE.  *> Accept balance from command line
            COMPUTE INTEREST = (PRINCIPAL * RATE * TIMEAT) / 100.
            DISPLAY "Interest Calculated: " INTEREST.
            STOP RUN.
