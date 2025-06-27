@@ -50,9 +50,8 @@ def generate_report():
             f.write(f'Account: {row[0]} Bal: {row[1]}\n')
             total += row[1]
         f.write(f'Total: {total}\n')
-    print('Report at C:/banking-mainframe-project/data/report.txt')
 
-# Let user add transactions
+# View transactions
 def view_transactions():
     try:
         with open('C:/banking-mainframe-project/data/transactions.txt', 'r') as f:
@@ -61,16 +60,31 @@ def view_transactions():
     except FileNotFoundError:
         print("\nNo transaction history yet.")
 
-# COBOL integration
+# COBOL integration with total interest
 def calculate_interest():
     try:
-        cursor.execute('SELECT BALANCE FROM ACCOUNTS WHERE ACCOUNT_ID = ?', (123456,))
-        balance = cursor.fetchone()[0]
-        result = subprocess.run(['C:/banking-mainframe-project/scripts/bin/interest.exe', str(balance)], capture_output=True, text=True)
+        # Ensure account_data.ps is up-to-date with current balances
+        with open('C:/banking-mainframe-project/scripts/bin/account_data.ps', 'w') as f:
+            cursor.execute('SELECT ACCOUNT_ID, BALANCE FROM ACCOUNTS')
+            for row in cursor.fetchall():
+                f.write(f"{row[0]},{row[1]:.2f}\n")
+        
+        # Run COBOL program and capture output
+        result = subprocess.run(["C:/banking-mainframe-project/scripts/bin/interest.exe"], capture_output=True, text=True)
         if result.returncode == 0:
-            print("COBOL Interest Calculation:", result.stdout)
+            cobol_output = result.stdout
+            print("COBOL Interest Calculation:\n" + cobol_output)
+            interest_values = []
+            for line in cobol_output.splitlines():
+                if "Interest Calculated:" in line:
+                    interest = float(line.split("Interest Calculated:")[1].strip())
+                    interest_values.append(interest)
+            total_interest = sum(interest_values) if interest_values else 0.0
+            
             with open('C:/banking-mainframe-project/data/report.txt', 'a') as f:
-                f.write("COBOL Interest for Account 123456: " + result.stdout + "\n")
+                f.write("COBOL Interest Calculations:\n")
+                f.write(cobol_output)
+                f.write(f"\nTotal Interest Calculated: {total_interest:.2f}\n")
         else:
             print("COBOL execution failed:", result.stderr)
     except Exception as e:
@@ -78,7 +92,7 @@ def calculate_interest():
 
 # Main program flow
 if __name__ == "__main__":
-    calculate_interest()  # Run at startup (optional, for console output)
+    calculate_interest()  # Run at startup for console output
     while True:
         view_transactions()
         acct_id = input('Enter Account ID (0 to exit): ')
@@ -91,5 +105,5 @@ if __name__ == "__main__":
         except ValueError:
             print('Invalid input. Use numbers for ID and amount.')
     generate_report()
-    calculate_interest()  # Add this line to write to report.txt after report
-    conn.close()
+    calculate_interest()  # Write to report.txt after report
+    conn.close()type data\report.txt
