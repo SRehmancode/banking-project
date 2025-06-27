@@ -3,7 +3,13 @@ Account: 123456 Bal: 1950.0
 Account: 789012 Bal: 7000.0
 Total: 8950.0
 COBOL Interest Calculations:
-Account: 123456 Interest Calculated: 000000.21
-Account: 789012 Interest Calculated: 000000.77
+Debug: ACCT-BALANCE-STR = 1950.00
+Debug: TEMP-BALANCE = 00000001950.00
+ACCT-BALANCE = 01950.00
+Account: 123456 Interest Calculated: 000214.50
+Debug: ACCT-BALANCE-STR = 7000.00
+Debug: TEMP-BALANCE = 00000007000.00
+ACCT-BALANCE = 07000.00
+Account: 789012 Interest Calculated: 000770.00
 
-Total Interest Calculated: 0.98
+Total Interest Calculated: 984.50

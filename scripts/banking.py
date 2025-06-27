@@ -106,4 +106,4 @@ if __name__ == "__main__":
             print('Invalid input. Use numbers for ID and amount.')
     generate_report()
     calculate_interest()  # Write to report.txt after report
-    conn.close()type data\report.txt
+    conn.close()
