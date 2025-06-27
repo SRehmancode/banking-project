@@ -2,5 +2,7 @@ End of Day Report
 Account: 123456 Bal: 1950.0
 Account: 789012 Bal: 7000.0
 Total: 8950.0
-COBOL Interest for Account 123456: Interest Calculated: 000214.50
+COBOL Interest for Account 123456: Account: 123456 Interest Calculated: 000000.21
+Account: 789012 Interest Calculated: 000000.77
+Account: 345678 Interest Calculated: 000000.33
 
