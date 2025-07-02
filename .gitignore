@@ -2,3 +2,7 @@ interest.exe
 scripts/bin/desktop.ini 
 scripts/bin/account_data.ps 
 scripts/bin/account_data.ps 
+"data/bank.db" 
+"data/bank_backup.db" 
+"*.pyc" 
+"__pycache__/" 
