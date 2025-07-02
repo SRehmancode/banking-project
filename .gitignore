@@ -1,8 +1,8 @@
-interest.exe 
-scripts/bin/desktop.ini 
-scripts/bin/account_data.ps 
-scripts/bin/account_data.ps 
-"data/bank.db" 
-"data/bank_backup.db" 
-"*.pyc" 
-"__pycache__/" 
+echo interest.exe> C:\banking-mainframe-project\.gitignore
+echo scripts/bin/desktop.ini>> C:\banking-mainframe-project\.gitignore
+echo data/bank.db>> C:\banking-mainframe-project\.gitignore
+echo data/bank_backup.db>> C:\banking-mainframe-project\.gitignore
+echo *.pyc>> C:\banking-mainframe-project\.gitignore
+echo __pycache__/>> C:\banking-mainframe-project\.gitignore
+echo data/account_data.ps>> C:\banking-mainframe-project\.gitignore
+echo !scripts/bin/account_data.ps>> C:\banking-mainframe-project\.gitignore
