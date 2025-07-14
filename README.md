@@ -1,24 +1,13 @@
-# Banking Project
-
-A simple banking system built with Python and SQLite, designed to manage transactions and generate reports. This project demonstrates basic file handling, database operations, and version control with Git.
-
-## Table of Contents
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Files](#files)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
-## Features
-- View transaction history stored in a text file (`transactions.txt`).
-- Generate reports saved as `report.txt`.
-- Use a SQLite database (`bank.db`) for persistent storage.
-- Written in Python 3.11.4 with a modular structure.
-
-## Installation
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/SRehmancode/banking-project.git
-   cd banking-mainframe-project# banking-project
+# Banking Mainframe Project
+- **Overview**: A hybrid project integrating COBOL and Python for banking operations.
+- **COBOL Component**: `CALCINTEREST.cob` (compiled to `CALCINTEREST.exe`) calculates interest on account balances, reading from `scripts\bin\account_data.ps` and writing to `scripts\bin\output.ps`.
+- **Python Component**: `banking.py` manages a SQLite database (`data\bank.db`), handles transactions, generates reports (`data\report.txt`), and integrates COBOL output.
+- **Features**:
+  - Stores 20 accounts with balances and interest rates.
+  - Supports deposits and withdrawals with transaction logging (`data\transactions.txt`).
+  - Calculates total interest using COBOL and appends to the report.
+- **Setup**:
+  - Install GnuCOBOL and Python.
+  - Compile COBOL: `cobc -x scripts\bin\CALCINTEREST.cob`.
+  - Run: `python banking.py`.
+- **Challenges**: Adapted from MVS TK5 by avoiding JCL, using local file handling instead.
