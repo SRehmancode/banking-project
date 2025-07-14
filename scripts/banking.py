@@ -9,7 +9,8 @@ DB_PATH = os.path.join(BASE_DIR, '..', 'data', 'bank.db')
 TRANS_PATH = os.path.join(BASE_DIR, '..', 'data', 'transactions.txt')
 REPORT_PATH = os.path.join(BASE_DIR, '..', 'data', 'report.txt')
 COBOL_INPUT_PATH = os.path.join(BASE_DIR, 'bin', 'account_data.ps')
-COBOL_EXE_PATH = os.path.join(BASE_DIR, 'bin', 'interest.exe')
+COBOL_EXE_PATH = os.path.join(BASE_DIR, 'bin', 'CALCINTEREST.exe')
+COBOL_OUTPUT_PATH = os.path.join(BASE_DIR, 'bin', 'output.ps')
 
 # Start the database
 conn = sqlite3.connect(DB_PATH)
@@ -92,9 +93,9 @@ def generate_report():
             f.write('End of Day Report\n')
             total_balance = 0
             for row in cursor.fetchall():
-                f.write(f'Account: {row[0]} Bal: {row[1]} Rate: {row[2]}% Last Trans: {row[3]}\n')
+                f.write(f'Account: {row[0]} Bal: {row[1]:.2f} Rate: {row[2]}% Last Trans: {row[3]}\n')  # Changed to .2f for two decimals
                 total_balance += row[1]
-            f.write(f'Total Balance: {total_balance}\n')
+            f.write(f'Total Balance: {total_balance:.2f}\n')  # Changed to .2f for two decimals
     except sqlite3.Error as e:
         print(f"Error generating report: {e}")
 
@@ -110,27 +111,35 @@ def view_transactions():
 # COBOL integration with total interest
 def calculate_interest():
     try:
+        # Write account data to input.ps
         with open(COBOL_INPUT_PATH, 'w') as f:
             cursor.execute('SELECT ACCOUNT_ID, BALANCE, INTEREST_RATE FROM ACCOUNTS')
             for row in cursor.fetchall():
-                f.write(f"{row[0]} {row[1]:.2f} {row[2]:.1f}\n")
-        result = subprocess.run([COBOL_EXE_PATH], capture_output=True, text=True)
+                f.write(f"{row[0]:06d} {row[1]:07.2f} {row[2]:03.1f}\n")
+        # Run the COBOL program
+        result = subprocess.run([COBOL_EXE_PATH], capture_output=True, text=True, check=True)
         if result.returncode == 0:
-            cobol_output = result.stdout
+            # Read the output from output.ps
             interest_values = []
-            for line in cobol_output.splitlines():
-                if "Interest Calculated:" in line:
-                    interest = float(line.split("Interest Calculated:")[1].strip())
-                    interest_values.append(interest)
+            with open(COBOL_OUTPUT_PATH, 'r') as f:
+                for line in f:
+                    if "Account:" in line:
+                        parts = line.split()
+                        interest = float(parts[7])  # Interest is the 8th element (index 7)
+                        interest_values.append(interest)
             total_interest = sum(interest_values) if interest_values else 0.0
+            # Append to report
             with open(REPORT_PATH, 'a') as f:
                 f.write("COBOL Interest Calculations:\n")
-                f.write(cobol_output)
+                with open(COBOL_OUTPUT_PATH, 'r') as output_file:
+                    f.write(output_file.read())
                 f.write(f"\nTotal Interest Calculated: {total_interest:.2f}\n")
         else:
             print(f"COBOL execution failed: {result.stderr}")
     except FileNotFoundError as e:
         print(f"File error: {e}")
+    except subprocess.CalledProcessError as e:
+        print(f"COBOL process error: {e}")
     except Exception as e:
         print(f"Error calling COBOL: {e}")
 
